@@ -4,10 +4,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,9 +17,7 @@ import com.udacity.vehicles.domain.car.Details;
 import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.service.CarService;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,7 +80,7 @@ public class CarControllerTest {
 
     private void createCarRecord() throws Exception {
         Car car = getCar();
-        System.out.println(car);
+//        System.out.println(car);
         mvc.perform(
                         post(new URI("/cars"))
                                 .content(json.write(car).getJson())
@@ -141,6 +136,23 @@ public class CarControllerTest {
          */
         createCarRecord();
         retrieveSingleCar();
+    }
+
+    @Test
+    public void updateCar() throws Exception {
+        createCarRecord();
+        updateCarRecord();
+    }
+
+    private  void updateCarRecord() throws Exception {
+        Car car = getCar();
+        car.setLocation(new Location(49.7300, -63.935242));
+        mvc.perform(
+                        put(new URI("/cars/1"))
+                                .content( json.write(car).getJson())
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().is2xxSuccessful());
     }
 
     /**
